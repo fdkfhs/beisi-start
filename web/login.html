@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录系统</title>
+    <style>
+        /* 基础样式，简洁美观 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-item {
+            margin-bottom: 20px;
+        }
+
+        .form-item label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .form-item input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-item input:focus {
+            outline: none;
+            border-color: #409eff;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #409eff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:disabled {
+            background-color: #a0cfff;
+            cursor: not-allowed;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            background-color: #337ecc;
+        }
+
+        /* 提示信息样式 */
+        .tip {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-tip {
+            color: #67c23a;
+        }
+
+        .error-tip {
+            color: #f56c6c;
+        }
+
+        /* 欢迎信息样式 */
+        .welcome-box {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .welcome-box h2 {
+            margin-bottom: 10px;
+            color: #409eff;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: #f56c6c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录表单 -->
+    <div class="login-container">
+        <div class="login-form">
+            <h2 class="login-title">用户登录</h2>
+            <div class="form-item">
+                <label for="username">用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名">
+            </div>
+            <div class="form-item">
+                <label for="password">密码</label>
+                <input type="password" id="password" placeholder="请输入密码">
+            </div>
+            <button class="login-btn" id="loginBtn">登录</button>
+            <div class="tip error-tip" id="errorTip"></div>
+            <div class="tip success-tip" id="successTip"></div>
+        </div>
+
+        <!-- 登录成功后的欢迎页面 -->
+        <div class="welcome-box" id="welcomeBox">
+            <h2 id="welcomeText"></h2>
+            <p>你的Token：<span id="tokenText"></span></p>
+            <button class="logout-btn" id="logoutBtn">退出登录</button>
+        </div>
+    </div>
+
+    <script>
+        // 核心变量
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorTip = document.getElementById('errorTip');
+        const successTip = document.getElementById('successTip');
+        const welcomeBox = document.getElementById('welcomeBox');
+        const welcomeText = document.getElementById('welcomeText');
+        const tokenText = document.getElementById('tokenText');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // 后端接口地址（部署时替换为你的服务器IP/域名）
+        const API_URL = 'http://127.0.0.1:8089/api/login'; 
+        // 示例：const API_URL = 'http://192.168.1.100:8080/api/login';
+
+        // 页面加载时检查是否有已存储的Token（实现记住登录状态）
+        window.onload = function() {
+            const savedToken = localStorage.getItem('loginToken');
+            const savedUsername = localStorage.getItem('loginUsername');
+            if (savedToken && savedUsername) {
+                showWelcomePage(savedUsername, savedToken);
+            }
+        }
+
+        // 登录按钮点击事件
+        loginBtn.addEventListener('click', async function() {
+            // 1. 表单验证
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username) {
+                showTip(errorTip, '请输入用户名！');
+                return;
+            }
+            if (!password) {
+                showTip(errorTip, '请输入密码！');
+                return;
+            }
+
+            // 2. 显示loading状态（禁用按钮）
+            loginBtn.disabled = true;
+            loginBtn.innerText = '登录中...';
+            hideAllTips(); // 隐藏之前的提示
+
+            try {
+                // 3. 调用后端登录接口
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                // 4. 处理接口返回结果
+                if (result.code === 0) {
+                    // 登录成功
+                    showTip(successTip, result.message);
+                    // 存储Token和用户名到本地
+                    localStorage.setItem('loginToken', result.data.token);
+                    localStorage.setItem('loginUsername', username);
+                    // 显示欢迎页面
+                    setTimeout(() => {
+                        showWelcomePage(username, result.data.token);
+                    }, 1000);
+                } else {
+                    // 登录失败
+                    showTip(errorTip, result.message || '登录失败，请重试！');
+                }
+            } catch (error) {
+                // 网络错误/接口异常
+                showTip(errorTip, '网络异常，请检查后端服务是否启动！');
+                console.error('登录请求失败：', error);
+            } finally {
+                // 恢复按钮状态
+                loginBtn.disabled = false;
+                loginBtn.innerText = '登录';
+            }
+        });
+
+        // 退出登录按钮事件
+        logoutBtn.addEventListener('click', function() {
+            // 清除本地存储
+            localStorage.removeItem('loginToken');
+            localStorage.removeItem('loginUsername');
+            // 重置表单
+            usernameInput.value = '';
+            passwordInput.value = '';
+            hideAllTips();
+            // 显示登录表单，隐藏欢迎页面
+            welcomeBox.style.display = 'none';
+            document.querySelector('.login-form').style.display = 'block';
+        });
+
+        // 辅助函数：显示提示信息
+        function showTip(tipElement, text) {
+            tipElement.innerText = text;
+            tipElement.style.display = 'block';
+            // 3秒后自动隐藏提示（除了登录失败的错误提示）
+            if (tipElement === successTip) {
+                setTimeout(() => {
+                    tipElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 辅助函数：隐藏所有提示
+        function hideAllTips() {
+            errorTip.style.display = 'none';
+            successTip.style.display = 'none';
+        }
+
+        // 辅助函数：显示欢迎页面
+        function showWelcomePage(username, token) {
+            document.querySelector('.login-form').style.display = 'none';
+            welcomeBox.style.display = 'block';
+            welcomeText.innerText = `欢迎，${username}！`;
+            tokenText.innerText = token;
+        }
+    </script>
+</body>
+</html>

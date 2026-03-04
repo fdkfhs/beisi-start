@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.3</version>
+        <relativePath/>
+    </parent>
+    <groupId>com.beisi</groupId>
+    <artifactId>demo1</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>demo1</name>
+    <description>demo1</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <!-- 核心修复：升级MyBatis Starter到适配Spring Boot 4.x的版本 -->
+        <mybatis.spring>3.0.3</mybatis.spring>
+        <lombok>1.18.30</lombok>
+        <!-- fastjson升级到适配JDK17的版本 -->
+        <fastjson>2.0.43</fastjson>
+        <!-- 替换commons-lang为commons-lang3（commons-lang已废弃，适配JDK17） -->
+        <commons.lang3>3.14.0</commons.lang3>
+        <!-- Druid升级到适配Spring Boot 4.x的版本 -->
+        <druid>1.2.20</druid>
+        <!-- PageHelper升级到适配Spring Boot 4.x的版本 -->
+        <pagehelper>1.4.7</pagehelper>
+        <!-- Knife4j升级到适配Spring Boot 4.x的版本 -->
+        <knife4j>3.0.2</knife4j>
+        <aspectj>1.9.22</aspectj>
+        <jjwt>0.11.5</jjwt>
+        <!-- JAXB替换为jakarta版本（Spring Boot 4.x用jakarta而非javax） -->
+        <jakarta.xml.bind>4.0.1</jakarta.xml.bind>
+        <!-- POI升级到适配JDK17的版本 -->
+        <poi>5.2.5</poi>
+        <aliyun.sdk.oss>3.18.0</aliyun.sdk.oss>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- MyBatis核心修复：3.0.3适配Spring Boot 4.x -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.spring}</version>
+        </dependency>
+
+        <!-- Lombok（去重，只保留一个） -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Fastjson2（适配JDK17） -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson}</version>
+        </dependency>
+
+        <!-- 替换commons-lang为commons-lang3（废弃旧包） -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3}</version>
+        </dependency>
+
+        <!-- Druid（适配Spring Boot 4.x） -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid}</version>
+        </dependency>
+
+        <!-- PageHelper（适配Spring Boot 4.x） -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper}</version>
+        </dependency>
+
+        <!-- Knife4j（适配Spring Boot 4.x） -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>${knife4j}</version>
+        </dependency>
+
+        <!-- AspectJ（适配JDK17） -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj}</version>
+        </dependency>
+
+        <!-- 阿里云OSS（适配JDK17） -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${aliyun.sdk.oss}</version>
+        </dependency>
+
+        <!-- JAXB（替换为jakarta，适配Spring Boot 4.x） -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jakarta.xml.bind}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- POI（适配JDK17，统一版本） -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi}</version>
+        </dependency>
+
+        <!-- JJWT（适配JDK17） -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- 补充MySQL驱动（必须加，否则MyBatis无法连接数据库） -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
